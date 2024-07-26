@@ -24,6 +24,7 @@ instance Eq Country where
 -- Remember minimal complete definitions!
 
 -- Implement the Ord instance for Country
+
 instance Ord Country where
   -- Implement the compare function
   compare Finland Finland = EQ
@@ -36,6 +37,7 @@ instance Ord Country where
   compare Switzerland Switzerland = EQ
 
   -- Implement the (<=) function
+  
   Finland <= Finland = True
   Finland <= Switzerland = True
   Finland <= _ = True
