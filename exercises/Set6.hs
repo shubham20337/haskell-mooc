@@ -23,15 +23,21 @@ instance Eq Country where
 --
 -- Remember minimal complete definitions!
 
+-- Define the Country data type
+data Country = Finland | Norway | Switzerland deriving (Eq, Show)
+
+-- Implement the Ord instance for Country
 instance Ord Country where
+  -- Implement the compare function
   compare Finland Finland = EQ
-  compare Finland _ = LT
-  compare Norway Finland = GT
-  compare Norway Norway = EQ
+  compare Finland _       = LT
+  compare Norway Finland  = GT
+  compare Norway Norway   = EQ
   compare Norway Switzerland = LT
   compare Switzerland Switzerland = EQ
   compare Switzerland _ = GT
 
+  -- Implement the (<=) function
   Finland <= Finland = True
   Finland <= _ = True
   Norway <= Finland = False
@@ -39,8 +45,12 @@ instance Ord Country where
   Norway <= Switzerland = True
   Switzerland <= _ = False
 
+  -- Implement the min function
   min a b = if a <= b then a else b
+
+  -- Implement the max function
   max a b = if a <= b then b else a
+
 ------------------------------------------------------------------------------
 -- Ex 3: Implement an Eq instance for the type Name which contains a String.
 -- The Eq instance should ignore capitalization.
