@@ -9,16 +9,14 @@ import Data.Char (toLower)
 -- Ex 1: define an Eq instance for the type Country below. You'll need
 -- to use pattern matching.
 
-search :: Eq a => a -> Tree a -> Maybe [Step]
-search _ Empty = Nothing
-search val (Node v left right)
-  | val == v = Just []
-  | otherwise = case search val left of
-      Just steps -> Just (StepL : steps)
-      Nothing -> case search val right of
-        Just steps -> Just (StepR : steps)
-        Nothing -> Nothing
+data Country = Finland | Switzerland | Norway
+  deriving Show
 
+instance Eq Country where
+  Finland == Finland = True
+  Norway == Norway = True
+  Switzerland == Switzerland = True
+  _ == _ = False
 ------------------------------------------------------------------------------
 -- Ex 2: implement an Ord instance for Country so that
 --   Finland <= Norway <= Switzerland
@@ -43,7 +41,6 @@ instance Ord Country where
 
   min a b = if a <= b then a else b
   max a b = if a <= b then b else a
-
 ------------------------------------------------------------------------------
 -- Ex 3: Implement an Eq instance for the type Name which contains a String.
 -- The Eq instance should ignore capitalization.
