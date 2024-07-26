@@ -23,9 +23,6 @@ instance Eq Country where
 --
 -- Remember minimal complete definitions!
 
--- Define the Country data type
-data Country = Finland | Norway | Switzerland deriving (Eq, Show)
-
 -- Implement the Ord instance for Country
 instance Ord Country where
   -- Implement the compare function
