@@ -51,9 +51,6 @@ twoBananas = MkShoppingEntry "Banana" 1.1 2
 --   totalPrice threeApples  ==> 1.5
 --   totalPrice twoBananas   ==> 2.2
 
-data ShoppingEntry = MkShoppingEntry String Double Int
-  deriving Show
-
 totalPrice :: ShoppingEntry -> Double
 totalPrice (MkShoppingEntry _ price count) = price * fromIntegral count
 
