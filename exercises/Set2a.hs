@@ -149,7 +149,7 @@ safeIndex xs i
 --   eitherDiv 4 0   ==> Left "4/0"
 
 eitherDiv :: Integer -> Integer -> Either String Integer
-eitherDiv _ 0 = Left "division by zero"
+eitherDiv x 0 = Left (show x ++ "/0")
 eitherDiv x y = Right (x `div` y)
 
 ------------------------------------------------------------------------------
