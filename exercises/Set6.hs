@@ -26,16 +26,15 @@ instance Eq Country where
 -- Implement the Ord instance for Country
 
 data Country = Finland | Norway | Switzerland
-    deriving (Eq, Show)
 
 instance Ord Country where
-    compare Finland Finland = EQ
-    compare Finland _       = LT
-    compare Norway Finland  = GT
-    compare Norway Norway   = EQ
-    compare Norway Switzerland = LT
-    compare Switzerland Switzerland = EQ
-    compare Switzerland _   = GT
+  compare Finland Norway = LT
+  compare Finland Switzerland = LT
+  compare Norway Switzerland = LT
+  compare Norway Finland = GT
+  compare Switzerland Finland = GT
+  compare Switzerland Norway = GT
+  compare x x = EQ
 
 ------------------------------------------------------------------------------
 -- Ex 3: Implement an Eq instance for the type Name which contains a String.
