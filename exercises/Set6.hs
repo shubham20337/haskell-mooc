@@ -30,12 +30,12 @@ data Country = Finland | Norway | Switzerland
 
 instance Ord Country where
     compare Finland Finland = EQ
-    compare Finland _ = LT
-    compare Norway Finland = GT
-    compare Norway Norway = EQ
+    compare Finland _       = LT
+    compare Norway Finland  = GT
+    compare Norway Norway   = EQ
     compare Norway Switzerland = LT
     compare Switzerland Switzerland = EQ
-    compare Switzerland _ = GT
+    compare Switzerland _   = GT
 
 ------------------------------------------------------------------------------
 -- Ex 3: Implement an Eq instance for the type Name which contains a String.
