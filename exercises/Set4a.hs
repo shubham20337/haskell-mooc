@@ -100,14 +100,13 @@ rangeOf xs = maximum xs - minimum xs
 --   longest [[1,2,3],[4,5],[6]] ==> [1,2,3]
 --   longest ["bcd","def","ab"] ==> "bcd"
 
-import Data.List (foldr1)
+import Data.List (maximumBy)
 import Data.Ord (comparing)
 
 longest :: Ord a => [[a]] -> [a]
-longest = foldr1 (\a b -> case compare (length a) (length b) of
-                           GT -> a
-                           LT -> b
-                           EQ -> if head a <= head b then a else b)
+longest = maximumBy (\a b -> case compare (length a) (length b) of
+                               EQ -> compare (head a) (head b)
+                               other -> other)
 
 ------------------------------------------------------------------------------
 -- Ex 6: Implement the function incrementKey, that takes a list of
