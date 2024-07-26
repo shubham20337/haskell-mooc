@@ -155,7 +155,7 @@ study Graduated = Graduated
 --   ==> -1
 
 data UpDown = Increasing Int | Decreasing Int
-  deriving Show
+  deriving (Show, Eq)
 
 -- zero is an increasing counter with value 0
 zero :: UpDown
