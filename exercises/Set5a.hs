@@ -96,7 +96,8 @@ setAge newAge person = person { age = newAge }
 --   getY (up (up origin))    ==> 2
 --   getX (up (right origin)) ==> 1
 
-data Position = PositionUndefined
+data Position = MkPosition Int Int
+  deriving Show
 
 -- origin is a Position value with x and y set to 0
 origin :: Position
