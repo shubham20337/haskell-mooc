@@ -24,7 +24,8 @@ instance Eq Country where
 -- Remember minimal complete definitions!
 
 -- Define the Country data type
-data Country = Finland | Norway | Switzerland deriving (Eq, Show)
+data Country = Finland | Norway | Switzerland 
+deriving (Eq, Show)
 
 -- Implement the Ord instance for Country
 instance Ord Country where
@@ -34,12 +35,15 @@ instance Ord Country where
   compare Norway Finland  = GT
   compare Norway Norway   = EQ
   compare Norway Switzerland = LT
+  compare Switzerland Finland = GT
+  compare Switzerland Norway = GT
   compare Switzerland Switzerland = EQ
-  compare Switzerland _ = GT
 
   -- Implement the (<=) function
   Finland <= Finland = True
+  Finland <= Switzerland = True
   Finland <= _ = True
+  Switzerland <= Finland = false
   Norway <= Finland = False
   Norway <= Norway = True
   Norway <= Switzerland = True
