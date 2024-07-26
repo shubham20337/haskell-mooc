@@ -127,10 +127,8 @@ sumsOf :: [Int] -> [Int]
 sumsOf [] = []
 sumsOf (x:xs) = sumsOfHelper x xs
   where
-    sumsOfHelper _ [] = []
-    sumsOfHelper acc (y:ys) = let newSum = acc + y
-                              in acc : sumsOfHelper newSum ys
-
+    sumsOfHelper acc [] = [acc]
+    sumsOfHelper acc (y:ys) = acc : sumsOfHelper (acc + y) ys
 ------------------------------------------------------------------------------
 -- Ex 7: implement the function merge that merges two sorted lists of
 -- Ints into a sorted list
