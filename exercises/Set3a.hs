@@ -169,10 +169,10 @@ while check update value
 --
 -- Hint! Remember the case-of expression from lecture 2.
 
-while :: (a -> Bool) -> (a -> a) -> a -> a
-while check update value
-  | check value = while check update (update value)
-  | otherwise = value
+whileRight :: (a -> Either b a) -> a -> b
+whileRight check value = case check value of
+  Left result -> result
+  Right nextValue -> whileRight check nextValue
 
 -- for the whileRight examples:
 -- step k x doubles x if it's less than k
