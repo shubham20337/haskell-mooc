@@ -100,8 +100,11 @@ rangeOf xs = maximum xs - minimum xs
 --   longest [[1,2,3],[4,5],[6]] ==> [1,2,3]
 --   longest ["bcd","def","ab"] ==> "bcd"
 
+import Data.List (maximumBy)
+import Data.Ord (comparing)
+
 longest :: Ord a => [[a]] -> [a]
-longest = maximumBy (\a b -> compare (length a) (length b) <> compare (head a) (head b))
+longest = maximumBy (comparing length <> comparing head)
 
 ------------------------------------------------------------------------------
 -- Ex 6: Implement the function incrementKey, that takes a list of
