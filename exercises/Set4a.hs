@@ -21,8 +21,7 @@ import Data.List
 import Data.Ord
 import qualified Data.Map as Map
 import Data.Array
-import Data.List (maximumBy)
-import Data.Ord (comparing)
+
 ------------------------------------------------------------------------------
 -- Ex 1: implement the function allEqual which returns True if all
 -- values in the list are equal.
