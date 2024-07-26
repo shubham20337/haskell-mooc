@@ -6,7 +6,7 @@
 -- You can also play around with your answers in GHCi with
 --
 --   stack ghci Set1.hs
---
+---
 -- This set contains exercises on
 --   * defining functions
 --   * basic expressions
