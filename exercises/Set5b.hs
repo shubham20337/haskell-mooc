@@ -199,8 +199,11 @@ walk (StepR:steps) (Node _ _ right) = walk steps right
 --
 --   set [StepL,StepR] 1 (Node 0 Empty Empty)  ==>  (Node 0 Empty Empty)
 
+data Step = StepL | StepR
+data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Show, Eq)
+
 set :: [Step] -> a -> Tree a -> Tree a
-set [] val Empty = Node val Empty Empty
+set [] val Empty = Empty
 set [] val (Node _ left right) = Node val left right
 set (StepL:steps) val (Node v left right) = Node v (set steps val left) right
 set (StepR:steps) val (Node v left right) = Node v left (set steps val right)
