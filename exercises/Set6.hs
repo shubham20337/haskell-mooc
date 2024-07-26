@@ -25,16 +25,16 @@ instance Eq Country where
 
 -- Implement the Ord instance for Country
 
-data Country = Finland | Norway | Switzerland
+data Country = Finland | Norway | Switzerland deriving (Eq, Show)
+
+countryOrder :: Country -> Int
+countryOrder Finland = 1
+countryOrder Norway = 2
+countryOrder Switzerland = 3
 
 instance Ord Country where
-  compare Finland Norway = LT
-  compare Finland Switzerland = LT
-  compare Norway Switzerland = LT
-  compare Norway Finland = GT
-  compare Switzerland Finland = GT
-  compare Switzerland Norway = GT
-  compare x x = EQ
+  compare c1 c2 = compare (countryOrder c1) (countryOrder c2)
+
 
 ------------------------------------------------------------------------------
 -- Ex 3: Implement an Eq instance for the type Name which contains a String.
