@@ -484,14 +484,16 @@ data Blur = Blur
 instance Transform Blur where
   apply Blur img = makeImage (width img) (height img) blurPixel
     where
-      blurPixel x y = averageColors $ map (getColor img) (validNeighbors x y)
-      validNeighbors x y = filter (inBounds (width img) (height img)) (neighbors x y)
+      blurPixel x y = averageColors $ mapMaybe (getSafePixel img) (neighbors x y)
       neighbors x y = [(x, y), (x-1, y), (x+1, y), (x, y-1), (x, y+1)]
-      inBounds w h (x, y) = x >= 0 && x < w && y >= 0 && y < h
+      getSafePixel img (x, y)
+        | x >= 0 && x < width img && y >= 0 && y < height img = Just (getColor img (x, y))
+        | otherwise = Nothing
       averageColors colors = let (r, g, b, count) = foldr (\(Color r g b) (rAcc, gAcc, bAcc, n) ->
                                                             (rAcc + r, gAcc + g, bAcc + b, n + 1))
                                                         (0, 0, 0, 0) colors
                              in Color (r `div` count) (g `div` count) (b `div` count)
+                            
 
 ------------------------------------------------------------------------------
 
