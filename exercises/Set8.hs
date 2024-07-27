@@ -1,7 +1,8 @@
 module Set8 where
 
 import Data.Char (intToDigit)
-
+import Data.Char (digitToInt, intToDigit)
+import Numeric (showHex)
 import Mooc.Todo
 
 -- This is the final project for Introduction to Functional
@@ -479,34 +480,45 @@ checkered = flipBlend largeVerticalStripes2
 --        ["000000","000000","000000","000000","000000"]]
 
 
--- Placeholder width and height functions; replace with actual implementations if needed
-width :: Picture -> Int
-width _ = 400  -- Placeholder value; replace with the actual width of the image
 
-height :: Picture -> Int
-height _ = 300  -- Placeholder value; replace with the actual height of the image
-
-getColor :: Picture -> (Int, Int) -> Color
-getColor (Picture f) (x, y) = f (Coord x y)
-
-makeImage :: Int -> Int -> (Int -> Int -> Color) -> Picture
-makeImage w h f = Picture (\(Coord x y) -> if x >= 0 && x < w && y >= 0 && y < h then f x y else black)
+-- Assuming we have the following type classes and types defined
+class Transform a where
+  apply :: a -> [[String]] -> [[String]]
 
 data Blur = Blur
   deriving Show
 
+-- Helper function to convert a hex string to an integer
+hexToInt :: String -> Int
+hexToInt = foldl (\acc x -> acc * 16 + digitToInt x) 0
+
+-- Helper function to convert an integer to a hex string
+intToHex :: Int -> String
+intToHex n = padLeft 6 '0' $ showHex n ""
+
+-- Helper function to pad a string on the left with a given character
+padLeft :: Int -> Char -> String -> String
+padLeft len char str
+  | length str >= len = str
+  | otherwise         = replicate (len - length str) char ++ str
+
+-- Helper function to safely get a pixel value from the image
+getPixel :: [[String]] -> Int -> Int -> String
+getPixel image x y
+  | x < 0 || y < 0 || y >= length image || x >= length (head image) = "000000"
+  | otherwise = image !! y !! x
+
+-- Compute the average color of a pixel and its 4 neighbors
+averageColor :: [[String]] -> Int -> Int -> String
+averageColor image x y = intToHex avg
+  where
+    neighbors = [ getPixel image (x-1) y, getPixel image (x+1) y, getPixel image x (y-1), getPixel image x (y+1), getPixel image x y ]
+    avg = sum (map hexToInt neighbors) `div` length neighbors
+
+-- Implement the Transform instance for Blur
 instance Transform Blur where
-  apply Blur img = makeImage (width img) (height img) blurPixel
-    where
-      blurPixel x y = averageColors $ mapMaybe (getSafePixel img) (neighbors x y)
-      neighbors x y = [(x, y), (x-1, y), (x+1, y), (x, y-1), (x, y+1)]
-      getSafePixel img (x, y)
-        | x >= 0 && x < width img && y >= 0 && y < height img = Just (getColor img (x, y))
-        | otherwise = Nothing
-      averageColors colors = let (r, g, b, count) = foldr (\(Color r g b) (rAcc, gAcc, bAcc, n) ->
-                                                            (rAcc + r, gAcc + g, bAcc + b, n + 1))
-                                                        (0, 0, 0, 0) colors
-                             in Color (r `div` count) (g `div` count) (b `div` count)
+  apply Blur image = [[averageColor image x y | x <- [0..(length (head image) - 1)]] | y <- [0..(length image - 1)]]
+
 
 
 ------------------------------------------------------------------------------
@@ -522,12 +534,20 @@ instance Transform Blur where
 --        ["000000","141414","141414","141414","000000"],
 --        ["000000","000000","0a0a0a","000000","000000"]]
 
+-- Assuming the previous definitions of Transform, Blur, and associated helper functions
+
 data BlurMany = BlurMany Int
   deriving Show
 
+-- Recursive function to apply Blur n times
+applyBlurMany :: Int -> [[String]] -> [[String]]
+applyBlurMany 0 image = image
+applyBlurMany n image = applyBlurMany (n - 1) (apply Blur image)
+
+-- Implement the Transform instance for BlurMany
 instance Transform BlurMany where
-  apply (BlurMany 0) img = img
-  apply (BlurMany n) img = apply (BlurMany (n-1)) (apply Blur img)
+  apply (BlurMany n) = applyBlurMany n
+
 
 ------------------------------------------------------------------------------
 
