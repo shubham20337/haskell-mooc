@@ -1,7 +1,6 @@
 module Set8 where
 
 import Data.Char (intToDigit)
-import Data.Char (digitToInt, intToDigit)
 import Numeric (showHex)
 import Mooc.Todo
 
@@ -479,7 +478,8 @@ checkered = flipBlend largeVerticalStripes2
 --        ["000000","000000","333333","000000","000000"],
 --        ["000000","000000","000000","000000","000000"]]
 
--- Assuming we have the following type classes and types defined
+
+-- Define the Transform class
 class Transform a where
   apply :: a -> [[String]] -> [[String]]
 
@@ -528,6 +528,7 @@ applyBlurMany n image = applyBlurMany (n - 1) (apply Blur image)
 -- Implement the Transform instance for BlurMany
 instance Transform BlurMany where
   apply (BlurMany n) = applyBlurMany n
+
 
 
 ------------------------------------------------------------------------------
