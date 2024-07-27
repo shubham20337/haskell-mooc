@@ -478,22 +478,35 @@ checkered = flipBlend largeVerticalStripes2
 --        ["000000","000000","333333","000000","000000"],
 --        ["000000","000000","000000","000000","000000"]]
 
+-- Assuming Picture is a function from Coord to Color, we need to define these:
+width :: Picture -> Int
+width _ = 400  -- Placeholder, replace with the actual width of the image
+
+height :: Picture -> Int
+height _ = 300  -- Placeholder, replace with the actual height of the image
+
+getColor :: Picture -> (Int, Int) -> Color
+getColor (Picture f) (x, y) = f (Coord x y)
+
+makeImage :: Int -> Int -> (Int -> Int -> Color) -> Picture
+makeImage w h f = Picture (\(Coord x y) -> if x >= 0 && x < w && y >= 0 && y < h then f x y else black)
+
 data Blur = Blur
   deriving Show
 
 instance Transform Blur where
-  apply _ img = 
-    [ [ averageColor [ getPixel img x y
-                     , getPixel img (x-1) y
-                     , getPixel img (x+1) y
-                     , getPixel img x (y-1)
-                     , getPixel img x (y+1)
-                     ] 
-        | y <- [0..width-1] ]
-      | x <- [0..height-1] ]
+  apply Blur img = makeImage (width img) (height img) blurPixel
     where
-      height = length img
-      width  = length (head img)
+      blurPixel x y = averageColors $ map (getColor img) (neighbors x y)
+      neighbors x y = [(x, y), (x-1, y), (x+1, y), (x, y-1), (x, y+1)]
+      getPixel img (x, y) = if x >= 0 && x < width img && y >= 0 && y < height img
+                            then getColor img (x, y)
+                            else Color 0 0 0
+      averageColors colors = let (r, g, b, count) = foldr (\(Color r g b) (rAcc, gAcc, bAcc, n) ->
+                                                            (rAcc + r, gAcc + g, bAcc + b, n + 1))
+                                                        (0, 0, 0, 0) colors
+                             in Color (r `div` count) (g `div` count) (b `div` count)
+
 
 ------------------------------------------------------------------------------
 
@@ -512,10 +525,9 @@ data BlurMany = BlurMany Int
   deriving Show
 
 instance Transform BlurMany where
-  apply (BlurMany n) img = applyNTimes n (apply Blur) img
-    where
-      applyNTimes 0 _ image = image
-      applyNTimes k f image = applyNTimes (k - 1) f (f image)
+  apply (BlurMany 0) img = img
+  apply (BlurMany n) img = apply (BlurMany (n-1)) (apply Blur img)
+
 ------------------------------------------------------------------------------
 
 -- Here's a blurred version of our original snowman. See it by running
