@@ -482,17 +482,18 @@ data Blur = Blur
   deriving Show
 
 instance Transform Blur where
-  apply Blur img = makeImage (width img) (height img) blurPixel
+  apply _ img = 
+    [ [ averageColor [ getPixel img x y
+                     , getPixel img (x-1) y
+                     , getPixel img (x+1) y
+                     , getPixel img x (y-1)
+                     , getPixel img x (y+1)
+                     ] 
+        | y <- [0..width-1] ]
+      | x <- [0..height-1] ]
     where
-      blurPixel x y = averageColors $ map (getPixel img) (neighbors x y)
-      neighbors x y = [(x, y), (x-1, y), (x+1, y), (x, y-1), (x, y+1)]
-      getPixel img (x, y) = if x >= 0 && x < width img && y >= 0 && y < height img
-                            then getColor img (x, y)
-                            else Color 0 0 0
-      averageColors colors = let (r, g, b, count) = foldr (\(Color r g b) (rAcc, gAcc, bAcc, n) ->
-                                                            (rAcc + r, gAcc + g, bAcc + b, n + 1))
-                                                        (0, 0, 0, 0) colors
-                             in Color (r `div` count) (g `div` count) (b `div` count)
+      height = length img
+      width  = length (head img)
 
 ------------------------------------------------------------------------------
 
@@ -511,9 +512,10 @@ data BlurMany = BlurMany Int
   deriving Show
 
 instance Transform BlurMany where
-  apply (BlurMany 0) img = img
-  apply (BlurMany n) img = apply (BlurMany (n-1)) (apply Blur img)
-
+  apply (BlurMany n) img = applyNTimes n (apply Blur) img
+    where
+      applyNTimes 0 _ image = image
+      applyNTimes k f image = applyNTimes (k - 1) f (f image)
 ------------------------------------------------------------------------------
 
 -- Here's a blurred version of our original snowman. See it by running
