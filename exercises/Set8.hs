@@ -479,13 +479,14 @@ checkered = flipBlend largeVerticalStripes2
 --        ["000000","000000","333333","000000","000000"],
 --        ["000000","000000","000000","000000","000000"]]
 
-
-
 -- Assuming we have the following type classes and types defined
 class Transform a where
   apply :: a -> [[String]] -> [[String]]
 
 data Blur = Blur
+  deriving Show
+
+data BlurMany = BlurMany Int
   deriving Show
 
 -- Helper function to convert a hex string to an integer
@@ -519,9 +520,6 @@ averageColor image x y = intToHex avg
 instance Transform Blur where
   apply Blur image = [[averageColor image x y | x <- [0..(length (head image) - 1)]] | y <- [0..(length image - 1)]]
 
-data BlurMany = BlurMany Int
-  deriving Show
-
 -- Recursive function to apply Blur n times
 applyBlurMany :: Int -> [[String]] -> [[String]]
 applyBlurMany 0 image = image
@@ -530,6 +528,7 @@ applyBlurMany n image = applyBlurMany (n - 1) (apply Blur image)
 -- Implement the Transform instance for BlurMany
 instance Transform BlurMany where
   apply (BlurMany n) = applyBlurMany n
+
 
 ------------------------------------------------------------------------------
 
