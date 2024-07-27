@@ -482,11 +482,17 @@ data Blur = Blur
   deriving Show
 
 instance Transform Blur where
-  apply Blur (Picture f) = Picture g
+  apply Blur img = makeImage (width img) (height img) blurPixel
     where
-      g coord@(Coord x y) = blendColor (f coord)
-                           (blendColor (blendColor (f (Coord (x-1) y)) (f (Coord (x+1) y)))
-                           (blendColor (f (Coord x (y-1))) (f (Coord x (y+1)))))
+      blurPixel x y = averageColors $ map (getPixel img) (neighbors x y)
+      neighbors x y = [(x, y), (x-1, y), (x+1, y), (x, y-1), (x, y+1)]
+      getPixel img (x, y) = if x >= 0 && x < width img && y >= 0 && y < height img
+                            then getColor img (x, y)
+                            else Color 0 0 0
+      averageColors colors = let (r, g, b, count) = foldr (\(Color r g b) (rAcc, gAcc, bAcc, n) ->
+                                                            (rAcc + r, gAcc + g, bAcc + b, n + 1))
+                                                        (0, 0, 0, 0) colors
+                             in Color (r `div` count) (g `div` count) (b `div` count)
 
 ------------------------------------------------------------------------------
 
@@ -505,8 +511,8 @@ data BlurMany = BlurMany Int
   deriving Show
 
 instance Transform BlurMany where
-  apply (BlurMany 0) = id
-  apply (BlurMany n) = apply Blur . apply (BlurMany (n-1))
+  apply (BlurMany 0) img = img
+  apply (BlurMany n) img = apply (BlurMany (n-1)) (apply Blur img)
 
 ------------------------------------------------------------------------------
 
