@@ -519,7 +519,17 @@ averageColor image x y = intToHex avg
 instance Transform Blur where
   apply Blur image = [[averageColor image x y | x <- [0..(length (head image) - 1)]] | y <- [0..(length image - 1)]]
 
+data BlurMany = BlurMany Int
+  deriving Show
 
+-- Recursive function to apply Blur n times
+applyBlurMany :: Int -> [[String]] -> [[String]]
+applyBlurMany 0 image = image
+applyBlurMany n image = applyBlurMany (n - 1) (apply Blur image)
+
+-- Implement the Transform instance for BlurMany
+instance Transform BlurMany where
+  apply (BlurMany n) = applyBlurMany n
 
 ------------------------------------------------------------------------------
 
